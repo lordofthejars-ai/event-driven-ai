@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1" author="alex">
+        <ext:createCollection collectionName="product"/>
+
+        <ext:insertOne collectionName="product">
+            <ext:document>{"name":"Quarkus T-shirt", "price": 10.00, "comments":[]}</ext:document>
+            <ext:document>{"name":"Quarkus twill cap", "price": 13.00, "comments":[]}</ext:document>
+            <ext:document>{"name":"Knit socks", "price": 14.45, "comments":[]}</ext:document>
+            <ext:document>{"name":"Quarkus H2Go water bottle", "price": 14.15, "comments":[]}</ext:document>
+            <ext:document>{"name":"Red Hat Impact T-shirt", "price": 9.00, "comments":[]}</ext:document>
+            <ext:document>{"name":Nanobloc Universal Webcam Cover", "price": 2.75, "comments":[]}</ext:document>
+        </ext:insertOne>
+    </changeSet>
+
+</databaseChangeLog>
