@@ -1,0 +1,39 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: review-service
+spec:
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: review-service
+    weight: 100
+  wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: text-sentiment-djl
+spec:
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: text-sentiment-djl
+    weight: 100
+  wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: kafka-ui
+spec:
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: kafka-ui-service
+    weight: 100
+  wildcardPolicy: None

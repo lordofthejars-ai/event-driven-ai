@@ -9,13 +9,13 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 import ai.djl.translate.TranslateException;
 import io.smallrye.mutiny.Uni;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Kafka Processor
  */
-@ApplicationScoped
+@Singleton
 public class RatingProcessor {
     
     @Inject

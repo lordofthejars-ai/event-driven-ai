@@ -62,7 +62,7 @@ spec:
     - name: http
       port: 80
       protocol: TCP
-      targetPort: 8082
+      targetPort: 8080
   selector:
     app.kubernetes.io/name: review-service
     app.kubernetes.io/version: 1.0.0-SNAPSHOT

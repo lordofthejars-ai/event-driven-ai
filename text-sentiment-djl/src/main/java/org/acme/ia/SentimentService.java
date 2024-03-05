@@ -6,10 +6,10 @@ import ai.djl.modality.Classifications.Classification;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.translate.TranslateException;
 import jakarta.annotation.PreDestroy;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
-@ApplicationScoped
+@Singleton
 public class SentimentService {
     
     @Inject

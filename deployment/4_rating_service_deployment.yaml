@@ -4,9 +4,9 @@ kind: Service
 metadata:
   annotations:
     app.quarkus.io/quarkus-version: 3.8.1
-    app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+    app.quarkus.io/commit-id: 25505de24f6f284c72e4a7460df14595fb743465
     app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
-    app.quarkus.io/build-timestamp: 2024-03-04 - 19:32:47 +0000
+    app.quarkus.io/build-timestamp: 2024-03-05 - 11:48:56 +0000
   labels:
     app.kubernetes.io/name: text-sentiment-djl
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
@@ -28,9 +28,9 @@ kind: Deployment
 metadata:
   annotations:
     app.quarkus.io/quarkus-version: 3.8.1
-    app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+    app.quarkus.io/commit-id: 25505de24f6f284c72e4a7460df14595fb743465
     app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
-    app.quarkus.io/build-timestamp: 2024-03-04 - 19:32:47 +0000
+    app.quarkus.io/build-timestamp: 2024-03-05 - 11:48:56 +0000
   labels:
     app.kubernetes.io/name: text-sentiment-djl
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
@@ -46,9 +46,9 @@ spec:
     metadata:
       annotations:
         app.quarkus.io/quarkus-version: 3.8.1
-        app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+        app.quarkus.io/commit-id: 25505de24f6f284c72e4a7460df14595fb743465
         app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
-        app.quarkus.io/build-timestamp: 2024-03-04 - 19:32:47 +0000
+        app.quarkus.io/build-timestamp: 2024-03-05 - 11:48:56 +0000
       labels:
         app.kubernetes.io/managed-by: quarkus
         app.kubernetes.io/name: text-sentiment-djl
@@ -62,8 +62,38 @@ spec:
                   fieldPath: metadata.namespace
           image: quay.io/lordofthejars/text-sentiment-djl:1.0.0-SNAPSHOT
           imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
           name: text-sentiment-djl
           ports:
             - containerPort: 8080
               name: http
               protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          startupProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/started
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10

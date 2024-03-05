@@ -8,6 +8,7 @@ import ai.djl.MalformedModelException;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.translate.TranslateException;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -15,7 +16,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 /**
- * Rest Processor
+ * REST Processor
  */
 @Path("/hello")
 public class SentimentAnalysisResource {
