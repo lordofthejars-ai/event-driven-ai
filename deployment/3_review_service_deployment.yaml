@@ -1,0 +1,144 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.8.1
+    app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+    app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
+    app.quarkus.io/build-timestamp: 2024-03-04 - 17:19:49 +0000
+  labels:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+  name: review-service
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: view-jobs
+rules:
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: review-service-view-jobs
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: view-jobs
+subjects:
+  - kind: ServiceAccount
+    apiGroup: ""
+    name: review-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.8.1
+    app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+    app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
+    app.quarkus.io/build-timestamp: 2024-03-04 - 17:19:49 +0000
+  labels:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+  name: review-service
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8082
+  selector:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.8.1
+    app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+    app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
+    app.quarkus.io/build-timestamp: 2024-03-04 - 17:19:49 +0000
+  labels:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+  name: review-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.kubernetes.io/name: review-service
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/quarkus-version: 3.8.1
+        app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+        app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
+        app.quarkus.io/build-timestamp: 2024-03-04 - 17:19:49 +0000
+      labels:
+        app.kubernetes.io/managed-by: quarkus
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/name: review-service
+    spec:
+      containers:
+        - env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: QUARKUS_LIQUIBASE_MONGODB_ENABLED
+              value: "false"
+          image: quay.io/lordofthejars/review-service:1.0.0-SNAPSHOT
+          imagePullPolicy: Always
+          name: review-service
+          ports:
+            - containerPort: 8082
+              name: http
+              protocol: TCP
+      initContainers:
+        - args:
+            - job
+            - review-service-liquibase-mongodb-init
+          image: groundnuty/k8s-wait-for:no-root-v1.7
+          imagePullPolicy: IfNotPresent
+          name: wait-for-liquibase-mongodb
+      serviceAccountName: review-service
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: review-service-liquibase-mongodb-init
+spec:
+  completionMode: NonIndexed
+  template:
+    metadata: {}
+    spec:
+      containers:
+        - env:
+            - name: QUARKUS_INIT_AND_EXIT
+              value: "true"
+            - name: QUARKUS_LIQUIBASE_MONGODB_ENABLED
+              value: "true"
+          image: quay.io/lordofthejars/review-service:1.0.0-SNAPSHOT
+          name: review-service-liquibase-mongodb-init
+      restartPolicy: OnFailure
+      serviceAccountName: review-service
