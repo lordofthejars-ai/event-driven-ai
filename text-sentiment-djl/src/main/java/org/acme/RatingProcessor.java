@@ -25,8 +25,8 @@ public class RatingProcessor {
     @Outgoing("rating")
     public Uni<Rating> process(Review review) throws TranslateException {
         return Uni.createFrom()
-            .item(sentimentService.analyze(review.review))
-            .map(sentiment -> new Rating(review.name, Star.from(sentiment)));
+            .item(sentimentService.analyze(review.text()))
+            .map(sentiment -> new Rating(review.productId(), Star.from(sentiment)));
     }
 
 }
