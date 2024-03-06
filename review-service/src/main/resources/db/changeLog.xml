@@ -10,23 +10,38 @@
         <ext:createCollection collectionName="product"/>
 
         <ext:insertOne collectionName="product">
-            <ext:document>{"name":"Quarkus T-shirt", "price": 10.00, "comments":[]}</ext:document>
+            <ext:document>{"name":"Quarkus T-shirt", "price": 10.00}</ext:document>
         </ext:insertOne>
         <ext:insertOne collectionName="product">
-            <ext:document>{"name":"Quarkus twill cap", "price": 13.00, "comments":[]}</ext:document>
+            <ext:document>{"name":"Quarkus twill cap", "price": 13.00}</ext:document>
         </ext:insertOne>
         <ext:insertOne collectionName="product">
-            <ext:document>{"name":"Knit socks", "price": 14.45, "comments":[]}</ext:document>
+            <ext:document>{"name":"Knit socks", "price": 14.45}</ext:document>
         </ext:insertOne>
         <ext:insertOne collectionName="product">
-            <ext:document>{"name":"Quarkus H2Go water bottle", "price": 14.15, "comments":[]}</ext:document>
+            <ext:document>{"name":"Quarkus H2Go water bottle", "price": 14.15}</ext:document>
         </ext:insertOne>
         <ext:insertOne collectionName="product">
-        <ext:document>{"name":"Red Hat Impact T-shirt", "price": 9.00, "comments":[]}</ext:document>
+        <ext:document>{"name":"Red Hat Impact T-shirt", "price": 9.00}</ext:document>
             </ext:insertOne>
         <ext:insertOne collectionName="product">
-            <ext:document>{"name":"Nanobloc Universal Webcam Cover", "price": 2.75, "comments":[]}</ext:document>
+            <ext:document>{"name":"Nanobloc Universal Webcam Cover", "price": 2.75}</ext:document>
         </ext:insertOne>
+    </changeSet>
+
+    <changeSet id="2" author="hanspeter">
+        <ext:createCollection collectionName="feedback"/>
+        <ext:insertMany collectionName="feedback">
+            <ext:documents>
+            [
+                {"text": "I like a lot. I love it."},
+                {"text": "It's fine."},
+                {"text": "It's normal."},
+                {"text": "Not good, not bad."},
+                {"text": "It's horrible!"}
+            ]
+            </ext:documents>
+        </ext:insertMany>
     </changeSet>
 
 </databaseChangeLog>
