@@ -1,13 +1,14 @@
 package org.acme;
 
-import java.util.List;
-
 import org.acme.model.Product;
 import org.acme.model.Review;
+import org.bson.types.ObjectId;
+import org.acme.model.Comment;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -25,15 +26,20 @@ public class ReviewResource {
     @GET
     @Path("/generate")
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Review generate() {
 
         // Generates a random comment for a random product
         Review review = reviewGenerator.generate();
 
         // MongoDB update
-        Product product = Product.find("name", review.name).firstResult();
-        product.addComment(review.review);
+        Product product = Product.findById(new ObjectId(review.productId()));
         product.update();
+
+        Comment comment = new Comment();
+        comment.productId = product.id;
+        comment.text = review.text();
+        comment.persist();
 
         // Debezium should do this
         emit.send(review);
@@ -41,9 +47,4 @@ public class ReviewResource {
         return review;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Product> products() {
-        return Product.listAll();
-    }
 }

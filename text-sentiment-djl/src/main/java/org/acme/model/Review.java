@@ -1,8 +1,3 @@
 package org.acme.model;
 
-public class Review {
-    
-    public String name;
-    public String review;
-
-}
+public record Review(String productId, String text) {}
