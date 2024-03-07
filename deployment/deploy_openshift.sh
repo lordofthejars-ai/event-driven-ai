@@ -26,19 +26,19 @@ echo "Adding OpenShift Routes"
 kubectl apply -f 10_openshift_routes.yaml
 
 reviewHost=`oc get route review-service -o jsonpath={.spec.host}`
-reviewUrl="https://$reviewHost/review"
+reviewUrl="https://$reviewHost"
 
 read -p "Show products before any review"
 
-curl $reviewUrl | python -m json.tool
+curl "$reviewUrl/productsWithComments" | python -m json.tool
 
 read -p "Create a random review"
 
-curl "$reviewUrl/generate"
+curl "$reviewUrl/review/generate" | python -m json.tool
 
 read -p "Show products after the review"
 
-curl $reviewUrl | python -m json.tool
+curl "$reviewUrl/productsWithComments" | python -m json.tool
 
 read -p "Show contents of review topic"
 

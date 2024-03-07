@@ -38,7 +38,11 @@
                 {"text": "It's fine."},
                 {"text": "It's normal."},
                 {"text": "Not good, not bad."},
-                {"text": "It's horrible!"}
+                {"text": "It's horrible!"},
+                {"text": "This is the best article I've ever bought."},
+                {"text": "It's not the best but it words"},
+                {"text": "I should buy another"},
+                {"text": "As described"}
             ]
             </ext:documents>
         </ext:insertMany>
