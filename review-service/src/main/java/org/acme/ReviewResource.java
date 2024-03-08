@@ -50,7 +50,7 @@ public class ReviewResource {
         comment.persist();
 
         if (ConfigUtils.getProfiles().contains("dev")) {
-            logger.info("Dev Mode configured and review is sent directñy to Kafka");
+            logger.info("Dev Mode configured and review is sent directly to Kafka");
             emit.send(review);
         }
 
