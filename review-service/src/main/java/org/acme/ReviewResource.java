@@ -6,7 +6,10 @@ import org.bson.types.ObjectId;
 import org.acme.model.Comment;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.jboss.logging.Logger;
 
+import io.quarkus.runtime.configuration.ConfigUtils;
+import io.quarkus.runtime.configuration.ProfileManager;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
@@ -23,6 +26,9 @@ public class ReviewResource {
     @Inject
     ReviewGenerator reviewGenerator;
 
+    @Inject
+    private Logger logger;
+
     @GET
     @Path("/generate")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,6 +38,8 @@ public class ReviewResource {
         // Generates a random comment for a random product
         Review review = reviewGenerator.generate();
 
+        logger.info("Generated review %s".formatted(review));
+
         // MongoDB update
         Product product = Product.findById(new ObjectId(review.productId()));
         product.update();
@@ -40,6 +48,11 @@ public class ReviewResource {
         comment.productId = product.id;
         comment.text = review.text();
         comment.persist();
+
+        if (ConfigUtils.getProfiles().contains("dev")) {
+            logger.info("Dev Mode configured and review is sent directñy to Kafka");
+            emit.send(review);
+        }
 
         return review;
     }
