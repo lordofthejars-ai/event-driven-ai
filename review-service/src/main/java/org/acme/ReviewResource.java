@@ -41,9 +41,6 @@ public class ReviewResource {
         comment.text = review.text();
         comment.persist();
 
-        // Debezium should do this
-        emit.send(review);
-
         return review;
     }
 

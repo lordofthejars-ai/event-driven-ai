@@ -1,0 +1,17 @@
+{
+  "name": "shop-comments-mongo-source-001",
+  "config": {
+    "connector.class": "io.debezium.connector.mongodb.MongoDbConnector",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": false,
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+    "mongodb.connection.string": "mongodb://mongodb:27017/?replicaSet=rs0",
+    "collection.include.list": "shop.comment",
+    "transforms": "unwrap,filter",
+    "transforms.unwrap.type": "io.debezium.connector.mongodb.transforms.ExtractNewDocumentState",
+    "transforms.filter.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.filter.exclude": "_id",
+    "topic.prefix": "mongodb"
+  }
+}

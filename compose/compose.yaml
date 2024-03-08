@@ -1,0 +1,98 @@
+version: '3.4'
+services:
+  kafka:
+    hostname: kafka
+    container_name: kafka
+    image: quay.io/strimzi/kafka:0.35.1-kafka-3.4.0
+    command:
+      - /bin/sh
+      - -c
+      - './bin/kafka-storage.sh format -t 9EDB9GBlQASth3IVRW0BCw -c ./config/kraft/server.properties && ./bin/kafka-server-start.sh ./config/kraft/server.properties --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS}'
+    environment:
+      LOG_DIR: /tmp/logs
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+    ports:
+      - 9092:9092
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 3   
+    networks:
+      - demo-network
+  connect:
+    hostname: connect
+    container_name: connect
+    image: quay.io/strimzi/kafka:0.35.1-kafka-3.4.0
+    command: [
+      "sh", "-c",
+      "bin/connect-distributed.sh /home/kafka/connect/connect-distributed.properties"
+    ]
+    depends_on:
+      - kafka
+    ports:
+      - 8083:8083
+    volumes:
+      - ./connect/connect-distributed.properties:/home/kafka/connect/connect-distributed.properties
+      - ./connect/debezium-connector-mongodb:/home/kafka/plugins/debezium-connector-mongodb
+    environment:
+      LOG_DIR: "/tmp/logs"
+    networks:
+      - demo-network
+  mongodb-rs-setup:
+    container_name: mongodb-rs-setup
+    image: mongodb/mongodb-community-server:7.0.3-ubi8
+    restart: on-failure
+    volumes:
+      - ./mongodb/rs_setup.sh:/home/rs_setup.sh
+    entrypoint: ["bash", "/home/rs_setup.sh"]
+    depends_on:
+      - mongodb
+    networks:
+      - demo-network  
+  mongodb:
+    image: mongodb/mongodb-community-server:7.0.3-ubi8
+    hostname: mongodb
+    container_name: mongodb
+    restart: on-failure
+    command: ["--port", "27017", "--replSet", "rs0", "--bind_ip_all"]
+    healthcheck:
+      test: echo 'rs.status().ok' | mongosh admin --port 27017 --quiet | grep 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    ports:
+      - 27017:27017
+    networks:
+      - demo-network
+  review-service:
+    build:
+      context: ../review-service
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: quay.io/hpgrahsl/eda-ai-quarkus-review-service:1.0.1
+    container_name: review-service
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - 8081:8080
+    networks:
+      - demo-network
+  sentiment-service:
+    build:
+      context: ../text-sentiment-djl
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: quay.io/hpgrahsl/eda-ai-quarkus-sentiment-service:1.0.1
+    container_name: sentiment-service
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - 8082:8080
+    networks:
+      - demo-network
+networks:
+  demo-network:
+    name: event-driven-ai
