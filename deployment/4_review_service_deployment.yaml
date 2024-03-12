@@ -44,6 +44,30 @@ subjects:
     apiGroup: ""
     name: review-service
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.8.1
+    app.quarkus.io/commit-id: e87492e27c4944bda2d39ed17865ed4f5fd559dd
+    app.quarkus.io/vcs-uri: https://github.com/lordofthejars/event-driven-ai.git
+    app.quarkus.io/build-timestamp: 2024-03-04 - 17:19:49 +0000
+  labels:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+  name: review-service
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: review-service
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
