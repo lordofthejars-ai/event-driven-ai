@@ -1,10 +1,10 @@
 = Event-Driven AI
 
-This is the typical sentiment AI example, but Kafka and Debezium are used instead of synchronous calls.
+This is the typical sentiment AI example, but https://kafka.apache.org/[Kafka] and https://debezium.io/[Debezium] are used instead of synchronous calls.
 
 The sentiment analysis example analyzes a comment made on a product, analyzes the sentiment, and rates it from 1 to 5 stars.
 
-In terms of architecture, there are two services: one that manages the product reviews and another that contains the HuggingFace model for analyzing the content.
+Regarding architecture, there are two services implemented in https://quarkus.io/[Quarkus]: one manages the product reviews, and another contains the https://huggingface.co/[HuggingFace] https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment[model] for analyzing the content.
 
 Kafka and Debezium indirectly manage the communication between both services, which is the correct way to avoid the double-writes problem.
 
